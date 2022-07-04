@@ -47,18 +47,40 @@ Resources:
           ToPort: 80
       VpcId: "vpc-08d981244c306404d"
 
-  EmminEC22:
-    Type: "AWS::EC2::Instance"
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      InstanceType:
-        Ref: InstanceTypeParameter
-      AvailabilityZone: eu-north-1a
+      AutoScalingGroupName: "EmminASG"
+      AvailabilityZones:
+        - "eu-north-1a"
+        - "eu-north-1b"
+        - "eu-north-1c"
+      LaunchConfigurationName: !Ref LaunchConfiguration
+      MaxSize: 3
+      MinSize: 1
+      TargetGroupARNs:
+        - !Ref LBTargetGroup
+      VPCZoneIdentifier:
+        - "subnet-04014b79f5d358982"
+        - "subnet-03cb17b85212448ad"
+        - "subnet-023c8647d04b76ab8"
+
+  LaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
       ImageId: !Ref LatestAmiId
-      SecurityGroupIds:
-        - !GetAtt SecurityGroupEC2.GroupId
-      Tags:
-        - Key: Name
-          Value: EmminEC2-2
+      InstanceType: !Ref InstanceTypeParameter
+      LaunchConfigurationName: "EmminLC"
+      SecurityGroups:
+        - !Ref SecurityGroupEC2
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - "\n"
+            - - "#!/bin/bash"
+              - "amazon-linux-extras install epel"
+              - "amazon-linux-extras install nginx1"
+              - "systemctl start nginx"
 
   EmminALBV2:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
