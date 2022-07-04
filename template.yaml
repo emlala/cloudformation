@@ -49,3 +49,8 @@ Resources:
       Tags:
         - Key: Name
           Value: EmminALB
+
+Outputs:
+  ALBOutput:
+    Description: DNS of ALB
+    Value: !GetAtt EmminALB.DNSName
