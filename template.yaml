@@ -1,11 +1,35 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Academy Demo CloudFormation
 
+Parameters:
+  InstanceTypeParameter:
+    Type: String
+    Default: t3.micro
+    AllowedValues:
+      - t3.micro
+      - t2.micro
+    Description: Only t3.micro or t2.micro allowed.
+
+  LatestAmiId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-kernel-5.10-hvm-x86_64-gp2"
+
 Resources:
   EmminSanko:
-    Type: AWS::S3::Bucket
+    Type: "AWS::S3::Bucket"
 
   EmminJono:
-    Type: AWS::SQS::Queue
+    Type: "AWS::SQS::Queue"
     Properties:
       VisibilityTimeout: 30
+
+  EmminEC2:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType:
+        Ref: InstanceTypeParameter
+      AvailabilityZone: eu-north-1a
+      ImageId: !Ref LatestAmiId
+      Tags:
+        - Key: Name
+          Value: EmminEC2
