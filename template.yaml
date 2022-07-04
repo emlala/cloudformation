@@ -4,3 +4,8 @@ Description: Academy Demo CloudFormation
 Resources:
   EmminSanko:
     Type: AWS::S3::Bucket
+
+  EmminJono:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 30
