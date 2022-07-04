@@ -33,3 +33,19 @@ Resources:
       Tags:
         - Key: Name
           Value: EmminEC2
+
+  EmminALB:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      Listeners:
+        - LoadBalancerPort: "80"
+          InstancePort: "80"
+          Protocol: HTTP
+      Scheme: internet-facing
+      Subnets:
+        - "subnet-04014b79f5d358982"
+        - "subnet-03cb17b85212448ad"
+        - "subnet-023c8647d04b76ab8"
+      Tags:
+        - Key: Name
+          Value: EmminALB
