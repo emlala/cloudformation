@@ -60,25 +60,36 @@ Resources:
         - Key: Name
           Value: EmminEC2-2
 
-  EmminALB:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
+  EmminALBV2:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Listeners:
-        - LoadBalancerPort: "80"
-          InstancePort: "80"
-          Protocol: HTTP
+      Name: EmminALBV2
       Scheme: internet-facing
+      SecurityGroups:
+        - !Ref SecurityGroupALB
       Subnets:
         - "subnet-04014b79f5d358982"
         - "subnet-03cb17b85212448ad"
         - "subnet-023c8647d04b76ab8"
-      SecurityGroups:
-        - !Ref SecurityGroupALB
-      Tags:
-        - Key: Name
-          Value: EmminALB
+
+  LBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref LBTargetGroup
+          Type: "forward"
+      LoadBalancerArn: "arn:aws:elasticloadbalancing:eu-north-1:235920682125:loadbalancer/app/EmminALBV2/930757e78afe51b3"
+      Port: 80
+      Protocol: "HTTP"
+
+  LBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 80
+      Protocol: "HTTP"
+      VpcId: "vpc-08d981244c306404d"
 
 Outputs:
   ALBOutput:
     Description: DNS of ALB
-    Value: !GetAtt EmminALB.DNSName
+    Value: !GetAtt EmminALBV2.DNSName
