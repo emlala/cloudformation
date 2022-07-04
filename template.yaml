@@ -29,7 +29,7 @@ Resources:
       GroupDescription: Security group for EC2 instances.
       GroupName: emmin-ec2-sg
       SecurityGroupIngress:
-        - CidrIp: 0.0.0.0/0
+        - SourceSecurityGroupId: "sg-0f4394f4d4c011281"
           FromPort: 80
           IpProtocol: tcp
           ToPort: 80
